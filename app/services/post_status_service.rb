@@ -27,7 +27,7 @@ class PostStatusService < BaseService
 
     LinkCrawlWorker.perform_async(status.id)
     DistributionWorker.perform_async(status.id)
-    Pubsubhubbub::DistributionWorker.perform_async(status.stream_entry.id)
+    Pubsubhubbub::DistributionWorker.perform_async_merged(status.stream_entry.id, merge_on: account.id)
 
     status
   end

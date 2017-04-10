@@ -15,7 +15,7 @@ class ReblogService < BaseService
     reblog = account.statuses.create!(reblog: reblogged_status, text: '')
 
     DistributionWorker.perform_async(reblog.id)
-    Pubsubhubbub::DistributionWorker.perform_async(reblog.stream_entry.id)
+    Pubsubhubbub::DistributionWorker.perform_async_merged(reblog.stream_entry.id, merge_on: account.id)
 
     if reblogged_status.local?
       NotifyService.new.call(reblog.reblog.account, reblog)

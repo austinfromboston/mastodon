@@ -17,7 +17,7 @@ class RemoveStatusService < BaseService
 
     return unless status.account.local?
 
-    Pubsubhubbub::DistributionWorker.perform_async(status.stream_entry.id)
+    Pubsubhubbub::DistributionWorker.perform_async(status.stream_entry.id, merge_on: status.account.id)
   end
 
   private

@@ -90,14 +90,14 @@ RSpec.describe PostStatusService do
 
   it 'pings PuSH hubs' do
     allow(DistributionWorker).to receive(:perform_async)
-    allow(Pubsubhubbub::DistributionWorker).to receive(:perform_async)
+    allow(Pubsubhubbub::DistributionWorker).to receive(:perform_async_merged)
     account = Fabricate(:account)
 
     status = subject.call(account, "test status update")
 
     expect(DistributionWorker).to have_received(:perform_async).with(status.id)
     expect(Pubsubhubbub::DistributionWorker).
-      to have_received(:perform_async).with(status.stream_entry.id)
+      to have_received(:perform_async_merged).with(status.stream_entry.id, merge_on: account.id)
   end
 
   it 'crawls links' do
